@@ -1,6 +1,4 @@
-# Web Inspection Management System
 
-## Overview
 A web-based safety inspection management system designed to digitize HSE inspection processes and improve reporting efficiency.
 
 ## Features
