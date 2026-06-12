@@ -1,5 +1,4 @@
-# web-inspection-management-system
-Web Inspection Management System
+# web inspection management system
 
 A web-based inspection management system developed to digitize workplace safety inspections and streamline reporting processes.
 
