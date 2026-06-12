@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Web app inspeksi safety untuk checklist kategori barang, simpan draft laporan, dan export hasil inspeksi." />
+    <meta name="theme-color" content="#7d3515" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="application-name" content="Inspeksi Safety Hub" />
+    <meta name="apple-mobile-web-app-title" content="Inspeksi Hub" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta property="og:title" content="Inspeksi Safety Hub" />
+    <meta property="og:description" content="Checklist inspeksi barang, simpan laporan, dan export hasil inspeksi dalam satu web app." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="id_ID" />
+    <title>Inspeksi Safety Hub</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Digital inspection workspace</p>
+          <h1>Inspeksi barang lebih cepat, rapi, dan siap export.</h1>
+          <p class="hero-text">
+            Web app ini menampilkan beberapa kategori inspeksi, lalu membantu
+            customer melakukan checklist, memberi catatan, dan mengunduh hasil
+            dalam format yang mudah dibagikan.
+          </p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card">
+            <span class="stat-label">Kategori aktif</span>
+            <strong id="categoryCount">5</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Status terisi</span>
+            <strong id="filledCount">0/0</strong>
+          </div>
+          <div class="stat-card accent">
+            <span class="stat-label">Export siap</span>
+            <strong id="exportStatus">Belum lengkap</strong>
+          </div>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <div class="sidebar-stack">
+          <section class="panel panel-categories">
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">Kategori inspeksi</p>
+                <h2>Pilih form yang ingin dibuka</h2>
+              </div>
+              <span class="section-badge">5 kategori</span>
+            </div>
+            <div id="categoryGrid" class="category-grid" aria-label="Inspection categories"></div>
+          </section>
+
+          <section class="panel panel-history">
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">Riwayat inspeksi</p>
+                <h2>Draft dan laporan tersimpan</h2>
+              </div>
+              <span id="historyCount" class="section-badge">0 tersimpan</span>
+            </div>
+
+            <label class="history-search">
+              <span>Cari laporan</span>
+              <input
+                type="search"
+                id="historySearch"
+                placeholder="Cari owner, project, atau kategori"
+              />
+            </label>
+
+            <div id="historyList" class="history-list" aria-live="polite"></div>
+          </section>
+        </div>
+
+        <section class="panel panel-form">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Form pemeriksaan</p>
+              <h2 id="formTitle">Inspeksi Kotak Obat</h2>
+            </div>
+            <span id="formCode" class="section-badge">HSE/FORM-06</span>
+          </div>
+
+          <div class="context-bar">
+            <div>
+              <span class="context-label">Deskripsi</span>
+              <p id="categoryDescription"></p>
+            </div>
+            <div>
+              <span class="context-label">Total item</span>
+              <p id="itemTotal"></p>
+            </div>
+            <div>
+              <span class="context-label">Progress</span>
+              <p id="progressLabel"></p>
+            </div>
+          </div>
+
+          <form id="inspectionForm" class="inspection-form">
+            <div class="report-banner">
+              <label class="report-name-field">
+                <span>Nama laporan</span>
+                <input
+                  type="text"
+                  id="reportName"
+                  placeholder="Contoh: PT Nusantara Safety - Kotak Obat Gudang"
+                />
+              </label>
+
+              <div class="report-banner-side">
+                <div class="draft-indicator">
+                  <span class="context-label">Draft aktif</span>
+                  <p id="activeReportLabel">Draft baru belum disimpan</p>
+                  <small id="saveFeedback" class="helper-text">
+                    Isi form lalu simpan agar laporan masuk ke riwayat inspeksi.
+                  </small>
+                </div>
+
+                <div class="report-banner-actions">
+                  <button type="button" id="newDraftButton" class="ghost-button">Draft baru</button>
+                  <button type="button" id="saveButton" class="primary-button">Simpan inspeksi</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="meta-grid">
+              <label>
+                <span>Tanggal inspeksi</span>
+                <input type="date" id="inspectionDate" />
+              </label>
+              <label>
+                <span>Owner</span>
+                <input type="text" id="owner" placeholder="Contoh: PT Nusantara Safety" />
+              </label>
+              <label>
+                <span>Project</span>
+                <input type="text" id="project" placeholder="Contoh: Pembangunan Gedung A" />
+              </label>
+              <label>
+                <span>Lokasi</span>
+                <input type="text" id="location" placeholder="Contoh: Jakarta Barat" />
+              </label>
+              <label>
+                <span>Inspector</span>
+                <input type="text" id="inspector" placeholder="Nama petugas inspeksi" />
+              </label>
+              <label>
+                <span>Supervisor</span>
+                <input type="text" id="supervisor" placeholder="Nama site supervisor" />
+              </label>
+            </div>
+
+            <div class="toolbar">
+              <div class="kit-switcher">
+                <span class="toolbar-label">Tipe perlengkapan</span>
+                <div id="variantButtons" class="variant-buttons" role="tablist" aria-label="Equipment variants"></div>
+              </div>
+              <div class="toolbar-actions">
+                <button type="button" id="resetButton" class="ghost-button">Reset checklist</button>
+                <button type="button" id="csvButton" class="secondary-button">Export Excel (.csv)</button>
+                <button type="button" id="docButton" class="primary-button">Export Word (.doc)</button>
+              </div>
+            </div>
+
+            <div class="table-shell">
+              <table class="inspection-table">
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Item</th>
+                    <th>Qty Standar</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                  </tr>
+                </thead>
+                <tbody id="checklistBody"></tbody>
+              </table>
+            </div>
+
+            <div class="notes-grid">
+              <label>
+                <span>Recommendation</span>
+                <textarea
+                  id="recommendation"
+                  rows="4"
+                  placeholder="Tuliskan rekomendasi atau tindakan lanjutan di sini"
+                ></textarea>
+              </label>
+              <aside class="summary-card">
+                <p class="section-kicker">Ringkasan inspeksi</p>
+                <div class="summary-row">
+                  <span>Good</span>
+                  <strong id="goodCount">0</strong>
+                </div>
+                <div class="summary-row">
+                  <span>Rejected</span>
+                  <strong id="rejectedCount">0</strong>
+                </div>
+                <div class="summary-row">
+                  <span>NA</span>
+                  <strong id="naCount">0</strong>
+                </div>
+                <div class="summary-row total">
+                  <span>Belum diisi</span>
+                  <strong id="pendingCount">0</strong>
+                </div>
+              </aside>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <template id="categoryCardTemplate">
+      <button type="button" class="category-card">
+        <span class="category-chip"></span>
+        <h3></h3>
+        <p class="category-summary"></p>
+        <div class="category-meta">
+          <span class="item-count"></span>
+          <span class="category-arrow">Open</span>
+        </div>
+      </button>
+    </template>
+
+    <template id="checklistRowTemplate">
+      <tr>
+        <td class="number-cell"></td>
+        <td class="item-cell"></td>
+        <td class="quantity-cell"></td>
+        <td class="status-cell">
+          <div class="status-group" role="radiogroup">
+            <button type="button" data-status="Good">Good</button>
+            <button type="button" data-status="Rejected">Rejected</button>
+            <button type="button" data-status="NA">NA</button>
+          </div>
+        </td>
+        <td class="remarks-cell">
+          <input type="text" class="remarks-input" placeholder="Tambahkan keterangan" />
+        </td>
+      </tr>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
